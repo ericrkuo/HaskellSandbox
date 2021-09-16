@@ -169,3 +169,4 @@ foofoo n = n+1
 -- expressions that pass type check, but causes error when evaluate
 bad1 = undefined
 bad2 = head []
+bad3 = 123 / undefined
