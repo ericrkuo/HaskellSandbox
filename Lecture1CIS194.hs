@@ -165,3 +165,7 @@ foofoo :: Int -> Int
 foofoo 2 = 2
 foofoo (-1) = (-1)
 foofoo n = n+1
+
+-- expressions that pass type check, but causes error when evaluate
+bad1 = undefined
+bad2 = head []
