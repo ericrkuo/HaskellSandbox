@@ -170,3 +170,23 @@ foofoo n = n+1
 bad1 = undefined
 bad2 = head []
 bad3 = 123 / undefined
+
+-- exaclty one true (lecture2.lhs)
+-- brute force
+oneTrue :: Bool -> Bool -> Bool -> Bool
+oneTrue x y z = (x && not y && not z) || (not x && y && not z) || (not x && not y && z)
+
+-- pattern matching
+oneTrue' :: Bool -> Bool -> Bool -> Bool
+oneTrue' True False False = True
+oneTrue' False True False = True
+oneTrue' False False True = True
+oneTrue' _ _ _ = False
+
+-- guards
+oneTrue'' :: Bool -> Bool -> Bool -> Bool
+oneTrue'' x y z
+  | x && not y && not z = True
+  | not x && y && not z = True
+  | not x && not y && z = True
+  | otherwise = False
