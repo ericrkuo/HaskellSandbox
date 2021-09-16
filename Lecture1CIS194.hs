@@ -158,4 +158,10 @@ go [] = 0       -- empty list
 go (x:[]) = 0   -- single element list
 go (x:y:[]) = x-y
 -- otherwise for (x:y:zs) take max(x-y, go (y:zs))
-go (x:y:zs) = maximum ((x-y):(go (y:zs)):[])  
+go (x:y:zs) = maximum ((x-y):(go (y:zs)):[])
+
+-- explicit pattern match with values
+foofoo :: Int -> Int
+foofoo 2 = 2
+foofoo (-1) = (-1)
+foofoo n = n+1
