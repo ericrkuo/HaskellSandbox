@@ -191,3 +191,69 @@ oneTrue'' x y z
   | not x && y && not z = True
   | not x && not y && z = True
   | otherwise = False
+
+-- lazy evaluation
+-- if call
+-- a = 0
+-- b = 1
+-- myIf (a /= 0) (b `div` a) 0
+-- this will now throw error even though we cannot divide by 0. That's because the second expression passed in as argument will not get evaluated b/c of laziness
+myIf :: Bool -> a -> a -> a
+myIf True thenArg _ = thenArg
+myIf False _ elseArg = elseArg
+
+-- equivalenty: intersperse :: Char -> String -> String
+intersperse :: Char -> [Char] -> [Char]
+intersperse _ [] = []
+intersperse _ [a] = [a]
+intersperse c (x:xs) = x:c:intersperse c xs
+
+-- L1.12
+-- | @orLB@ interprests list of Bool's as a Bool
+-- >>> orLB [] []
+-- False
+-- >>> orLB [False] []
+-- False
+-- >>> orLB [] [True]
+-- True
+-- >>> orLB [] [True, False, False]
+-- True
+-- >>> orLB [] [False, True]
+-- False
+-- >>> orLB [True, False] [False, True, True]
+-- True
+-- >>> orLB [False, True] [False, True]
+-- False
+-- >>> orLB [False] [False]
+-- False
+orLB :: [Bool] -> [Bool] -> Bool 
+orLB [] [] = False
+orLB (x:_) [] = x
+orLB [] (y:_) = y
+orLB (False:_) (False:_) = False
+orLB _ _ = True
+
+-- | @orLB'@ interprests list of Bool's as a Bool. GUARDS
+-- >>> orLB' [] []
+-- False
+-- >>> orLB' [False] []
+-- False
+-- >>> orLB' [] [True]
+-- True
+-- >>> orLB' [] [True, False, False]
+-- True
+-- >>> orLB [] [False, True]
+-- False
+-- >>> orLB' [True, False] [False, True, True]
+-- True
+-- >>> orLB' [False, True] [False, True]
+-- False
+-- >>> orLB' [False] [False]
+-- False
+orLB' :: [Bool] -> [Bool] -> Bool 
+orLB' [] [] = False
+orLB' (x:_) [] = x
+orLB' [] (y:_) = y
+orLB' (x:_) (y:_)
+    | not x && not y = False 
+    | otherwise = True
