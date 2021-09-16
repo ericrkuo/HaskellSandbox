@@ -170,6 +170,7 @@ foofoo n = n+1
 bad1 = undefined
 bad2 = head []
 bad3 = 123 / undefined
+bad4 = 2 `div` 0
 
 -- exaclty one true (lecture2.lhs)
 -- brute force
