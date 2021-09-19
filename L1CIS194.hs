@@ -124,14 +124,14 @@ fibSeq n = (fib n) : fibSeq (n - 1)
 
 bad = error "aslkdjasld"
 
-orLB :: [Bool] -> [Bool] -> Bool
-orLB [] [] = False
-orLB (x:_) [] = x
-orLB [] (x:_) = x
-orLB (x:xs) (y:ys)
-    | x == True = True
-    | y == True = True
-    | otherwise = False
+-- orLB :: [Bool] -> [Bool] -> Bool
+-- orLB [] [] = False
+-- orLB (x:_) [] = x
+-- orLB [] (x:_) = x
+-- orLB (x:xs) (y:ys)
+--     | x == True = True
+--     | y == True = True
+--     | otherwise = False
 
 -- example of matching case, but guard fails, what happens?
 -- in this case "testtest 0" will enter the next case
