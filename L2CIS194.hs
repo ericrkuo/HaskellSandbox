@@ -44,6 +44,7 @@ failureToZero (OK d)  = d
 --      type constructor same name as data constructor, but they are NOT the same thing
 --      data constructor argument has type of an algebraic data type
 --      data constructor argument with type of own type constructor
+--          - this is actually Recursive data types (covered later)
 --          --> try "foo (Cow (Cow (Person "as" "asd" 12)))"
 
 data Person =
