@@ -257,3 +257,7 @@ orLB' [] (y:_) = y
 orLB' (x:_) (y:_)
     | not x && not y = False 
     | otherwise = True
+
+-- pattern matching with square brackets
+boo :: [Int] -> String
+boo [x,y] = show (x+y)
