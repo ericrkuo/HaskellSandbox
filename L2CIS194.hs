@@ -66,3 +66,23 @@ foo (TestScore Failure _) = "I'm a failure"
 foo (TestScore (OK 50) _) = "You got 50!"
 foo (TestScore (OK d) b) = ((show d) ++ " " ++ (show b))
 foo (Cow p) = foo p
+
+data SparseList = Empty
+                | OneAndRest Double SparseList
+                | SkipAndRest Int SparseList
+  deriving (Eq, Show)       
+
+-- L2.5
+-- All it wants is to replace explicit 0's in OneAndRest with SkipAndRest 1
+slZeroToSkip :: SparseList -> SparseList
+slZeroToSkip Empty = Empty
+slZeroToSkip (OneAndRest 0.0 rest) = (SkipAndRest 1 (slZeroToSkip rest))
+slZeroToSkip (OneAndRest d rest) = (OneAndRest d (slZeroToSkip rest))
+slZeroToSkip (SkipAndRest n rest) = (SkipAndRest n (slZeroToSkip rest))
+
+-- L2.6
+slCompact :: SparseList -> SparseList
+slCompact Empty = Empty
+slCompact (OneAndRest d rest) = (OneAndRest d (slCompact rest))
+slCompact (SkipAndRest x (SkipAndRest y rest)) = slCompact (SkipAndRest ((max x 1)+(max y 1)) rest)
+slCompact (SkipAndRest x rest) = (SkipAndRest (max x 1) (slCompact rest))
