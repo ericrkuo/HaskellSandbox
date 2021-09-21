@@ -86,3 +86,60 @@ slCompact Empty = Empty
 slCompact (OneAndRest d rest) = (OneAndRest d (slCompact rest))
 slCompact (SkipAndRest x (SkipAndRest y rest)) = slCompact (SkipAndRest ((max x 1)+(max y 1)) rest)
 slCompact (SkipAndRest x rest) = (SkipAndRest (max x 1) (slCompact rest))
+
+-- pattern matching
+pmExample :: Person -> String
+-- x@pat
+pmExample p@(Person a b c) = "x@pat pattern matching gave: " ++ (show p)
+-- nested pattern matching
+pmExample (Cow p@(Person a b c)) = "Person " ++ (show p) ++ " likes cows"
+-- wild card matching
+pmExample _ = "Everything else"
+
+
+-- case expressions
+
+-- ex04 = case "Hello" of
+   --        [] -> 3
+      --       ('H':s) -> length s
+         --  _ -> 7
+
+-- failureToZero but with case expressions
+failureToZero' :: FailableDouble -> Double
+failureToZero' x = case x of
+                      Failure -> 0
+                      (OK d) -> d
+
+data IntList = EmptyEmpty | Cons Int IntList
+
+intListProd  :: IntList -> Int
+intListProd  EmptyEmpty = 1
+intListProd  (Cons x xs) = x * (intListProd xs)
+
+data Tree = EmptyLeaf
+          | Leaf Char
+          | Node Tree Int Tree
+  deriving Show
+
+{-
+          1
+      2       3
+    A   B        D
+-}
+tree :: Tree
+tree = Node (Node (Leaf 'A') 2 (Leaf 'B')) 1 (Node EmptyLeaf 3 (Leaf 'D'))
+
+inOrder :: Tree -> [String]
+inOrder EmptyLeaf = []
+inOrder (Leaf c) = [[c]]
+inOrder (Node left val right) = (inOrder left) ++ [(show val)] ++ (inOrder right)
+
+preOrder :: Tree -> [String]
+preOrder EmptyLeaf = []
+preOrder (Leaf c) = [[c]]
+preOrder (Node left val right) = [(show val)] ++ (preOrder left) ++ (preOrder right)
+
+postOrder :: Tree -> [String]
+postOrder EmptyLeaf = []
+postOrder (Leaf c) = [[c]]
+postOrder (Node left val right) = (postOrder left) ++ (postOrder right) ++ [(show val)]
