@@ -143,3 +143,130 @@ postOrder :: Tree -> [String]
 postOrder EmptyLeaf = []
 postOrder (Leaf c) = [[c]]
 postOrder (Node left val right) = (postOrder left) ++ (postOrder right) ++ [(show val)]
+
+-- L2
+-- Q8
+slEmpty, slTwoElt, slManyElt :: SparseList
+slEmpty = Empty
+slTwoElt = SkipAndRest 2 Empty
+slManyElt = OneAndRest 2.5 (OneAndRest 1 (SkipAndRest 1 (OneAndRest 3.2 (SkipAndRest 3 (OneAndRest 1 Empty)))))
+slManyElt2 = OneAndRest (-2) (OneAndRest 1 (SkipAndRest 0 (OneAndRest 0 (SkipAndRest 3 (OneAndRest (-1) Empty)))))
+
+filterLarger' :: Double -> SparseList -> SparseList
+filterLarger' _ Empty = Empty
+filterLarger' d (OneAndRest d' sl) | d' > d = OneAndRest d' (filterLarger' d sl)
+                                  | otherwise = filterLarger' d sl
+filterLarger' d (SkipAndRest n sl) | 0 > d = SkipAndRest n (filterLarger' d sl)
+                                  | otherwise = filterLarger' d sl
+                                
+filterWithinUnit' :: SparseList -> SparseList
+filterWithinUnit' Empty = Empty
+filterWithinUnit' (OneAndRest d sl) | abs d < 1 = OneAndRest d (filterWithinUnit' sl)
+                                   | otherwise = filterWithinUnit' sl
+filterWithinUnit' (SkipAndRest n sl) = SkipAndRest n (filterWithinUnit' sl)
+
+slFilter :: (Double -> Bool) -> SparseList -> SparseList
+slFilter _ Empty = Empty
+slFilter f (OneAndRest d sl)
+  | f d = OneAndRest d (slFilter f sl)
+  | otherwise = slFilter f sl
+slFilter f (SkipAndRest n sl)
+  | f 0 = SkipAndRest n (slFilter f sl)
+  | otherwise = slFilter f sl
+
+filterLarger :: Double -> SparseList -> SparseList
+filterLarger d = slFilter (> d)
+
+filterWithinUnit :: SparseList -> SparseList
+filterWithinUnit = slFilter (\n -> abs n < 1)
+
+-- 9
+slMap :: (Double -> Double) -> SparseList -> SparseList
+slMap _ Empty = Empty
+slMap f (OneAndRest d sl) = OneAndRest (f d) (slMap f sl)
+slMap f (SkipAndRest n sl) = SkipAndRest (round (f (fromIntegral n))) (slMap f sl)
+
+slSigns :: SparseList -> SparseList
+slSigns = slMap signum
+
+-- 12
+data ProVal a = CV a String
+              | PV a
+  deriving (Show, Eq)
+
+getVal :: ProVal a -> a
+getVal (CV value _) = value
+getVal (PV value) = value
+
+-- 13
+displayPro :: ProVal a -> String
+-- displayPro (CV _ comment) = ['['] ++ comment ++ [']'] -- equivalent
+displayPro (CV _ comment) = "[" ++ comment ++ "]"
+displayPro _ = "()"
+
+-- 14
+selectHead :: [Int] -> ProVal Int
+selectHead [] = (CV 0 "empty")
+selectHead (x:_) = (CV x "selected")
+
+-- bind (CV [] "Old") selectHead == CV 0 "[Old] [empty] bound"
+-- bind (CV [123,456] "hi") selectHead == CV 123 "[hi] [selected] bound"
+
+-- bind V1
+-- WRONG b/c can't use getVal
+bind'' :: ProVal a -> (a -> ProVal b) -> ProVal b
+bind'' pa@(PV val) f = CV (getVal pb) ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+  where pb = f val
+bind'' pa@(CV val cmt) f = CV (getVal pb) ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+  where pb = f val
+
+-- bind V2
+-- using pattern matching to where clauses
+-- using x@pat to give name x to entire pattern IN the where clause!!
+-- WRONG b/c pb@(CV x _) will not match to pb@(PV x)
+bind' :: ProVal a -> (a -> ProVal b) -> ProVal b
+bind' pa@(PV val) f = CV x (proA ++ " " ++ proB ++ " bound")
+  where
+    pb@(CV x _) = f val
+    proA = displayPro pa
+    proB = displayPro pb
+bind' pa@(CV val cmt) f = CV x (proA ++ " " ++ proB ++ " bound")
+  where
+    pb@(CV x _) = f val
+    proA = displayPro pa
+    proB = displayPro pb
+
+-- using case and where
+-- TODO is there a more succinct way to do this?
+--
+-- >>> bind (CV [123,456] "hi") selectHead
+-- CV 123 "[hi] [selected] bound"
+--
+-- >>> bind (CV [] "Old") selectHead
+-- CV 0 "[Old] [empty] bound"
+--
+-- >>> bind (PV True) (\n -> PV 1)
+-- CV 1 "() () bound"
+--
+-- >>> bind (CV [] "hi") (\n -> PV 1)
+-- CV 1 "[hi] () bound"
+--
+-- >>> bind (PV True) (\n -> CV 123 "x")
+-- CV 123 "() [x] bound"
+--
+-- >>> bind (PV True) (\n -> CV n (show n))
+-- CV True "() [True] bound"
+bind :: ProVal a -> (a -> ProVal b) -> ProVal b
+bind pa@(PV val) f = case pb of 
+  (CV x _ ) -> CV x cmt
+  (PV y ) -> CV y cmt
+  where
+    pb = f val
+    cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+bind pa@(CV val _) f = case pb of
+  (CV x _ ) -> CV x cmt
+  (PV y ) -> CV y cmt
+  where
+    pb = f val
+    cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+
