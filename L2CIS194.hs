@@ -284,3 +284,11 @@ mooTest (X f xs) = case pb of
 mooEx1 = mooTest (Moo (\n -> show n) False)
 mooEx2 = mooTest (X selectHead [1,2,3])
 mooEx3 = mooTest (X selectHead [])
+
+-- function in where clause
+ff :: String -> String -> String
+ff a b = printFancy a
+  where
+    printFancy x  -- IMPORTANT: needs to be on a new line
+      | x == "hello" = x ++ b
+      | otherwise = b ++ x ++ b
