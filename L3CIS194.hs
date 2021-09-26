@@ -1,7 +1,7 @@
 -- Recursion patterns
 
 data IntList = Empty | Cons Int IntList
-  deriving Show
+  deriving (Eq, Show)
 
 exampleList = Cons (-1) (Cons 2 (Cons (-6) Empty))
 
@@ -45,3 +45,48 @@ exFoldr1 = foldrIntList max 0 exampleList
 exFoldr2 = foldrIntList (max . abs) (-100) exampleList
 exFoldr3 = foldrIntList (\x y -> (show x) ++ " " ++ y) "hello" exampleList
 exFoldr4 = foldrIntList (+) 0 exampleList
+
+-- Polymorphism
+
+-- Polymorphic data types
+data List t = E | C t (List t)
+  deriving Show
+
+lst1 :: List Int
+lst1 = C 3 (C 5 (C 2 E))
+
+lst2 :: List Char
+lst2 = C 'x' (C 'y' (C 'z' E))
+
+lst3 :: List Bool
+lst3 = C True (C False E)
+
+lst4 :: List String
+lst4 = C "hello" (C "hi" (C "foo" (C "boo" E)))
+
+lst5 :: List IntList
+lst5 = C exampleList (C Empty (C (Cons 123 Empty) E))
+
+-- Polymorphic functions
+filterList :: (t -> Bool) -> List t -> List t
+filterList _ E = E
+filterList f (C x xs)
+  | f x = C x (filterList f xs)
+  | otherwise = filterList f xs
+
+exFilterList1 = filterList odd lst1
+exFilterList2 = filterList (> 'y') lst2
+exFilterList3 = filterList (&& True) lst3
+exFilterList4 = filterList (\n -> (filterIntList even n) /= Empty) lst5
+
+mapList :: (a -> b) -> List a -> List b
+mapList _ E        = E
+mapList f (C x xs) = C (f x) (mapList f xs)
+
+-- can use mapList to go from list of a's to list of b's
+-- eg. `mapList toList lst5` converts from List ConsList to List [Int]
+exMapList1 = mapList show lst1
+exMapList2 = mapList toList lst5
+
+toList Empty = []
+toList (Cons x xs) = x : (toList xs)
