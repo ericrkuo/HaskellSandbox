@@ -270,3 +270,17 @@ bind pa@(CV val _) f = case pb of
     pb = f val
     cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
 
+-- data constructor types that are function types in algebraic data types
+data Moo = Moo (Int -> String) Bool
+         | X ([Int] -> ProVal Int) [Int]
+
+mooTest :: Moo -> String
+mooTest (Moo f b) = (f 2) ++ (show b)
+mooTest (X f xs) = case pb of
+  (CV _ cmt) -> cmt
+  (PV y) -> show y
+  where pb = f xs
+
+mooEx1 = mooTest (Moo (\n -> show n) False)
+mooEx2 = mooTest (X selectHead [1,2,3])
+mooEx3 = mooTest (X selectHead [])
