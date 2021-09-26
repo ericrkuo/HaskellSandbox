@@ -90,3 +90,14 @@ exMapList2 = mapList toList lst5
 
 toList Empty = []
 toList (Cons x xs) = x : (toList xs)
+
+-- Sections or Operator Sections
+-- https://www.haskell.org/onlinereport/exps.html#sections
+
+ex01 = map (* 2) [1,2,3] -- (* 2) = (op e) = (\x -> x op e) where op = (*) and e = 2
+ex02 = map (2 *) [1,2,3] -- same as above b/c commutative
+ex03 = map (2 ^) [1,2,3] -- (\x -> 2 ^ x)
+ex04 = map (^ 2) [1,2,3] -- (\x -> x ^ 2)
+ex05 = map (2 `subtract`) [1,2,3]
+ex06 = map (`subtract` 2) [1,2,3]
+-- ex07 = map (- 2) [1,2,3] Invalid, `-` is treated specially in grammar, it is the unary operator https://wiki.haskell.org/Unary_operator
