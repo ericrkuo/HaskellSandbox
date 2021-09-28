@@ -256,6 +256,7 @@ bind' pa@(CV val cmt) f = CV x (proA ++ " " ++ proB ++ " bound")
 --
 -- >>> bind (PV True) (\n -> CV n (show n))
 -- CV True "() [True] bound"
+-- TODO try a helper function to extract the value of ProVal
 bind :: ProVal a -> (a -> ProVal b) -> ProVal b
 bind pa@(PV val) f = case pb of 
   (CV x _ ) -> CV x cmt

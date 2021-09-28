@@ -101,3 +101,29 @@ ex04 = map (^ 2) [1,2,3] -- (\x -> x ^ 2)
 ex05 = map (2 `subtract`) [1,2,3]
 ex06 = map (`subtract` 2) [1,2,3]
 -- ex07 = map (- 2) [1,2,3] Invalid, `-` is treated specially in grammar, it is the unary operator https://wiki.haskell.org/Unary_operator
+
+-- Total and partial functions
+-- Two ways to write partial functions
+
+-- 1. rewrite with Maybe or change output to indicate possible failure
+safeHead :: [a] -> Maybe a
+safeHead [] = Nothing
+safeHead (x:_) = Just x
+
+-- 2. If we are guaranteed some condition, types should reflect that to guarantee
+-- Therefore, compiler can enforce those guarantees
+data NonEmptyList a = NEL a [a]
+  deriving Show
+
+nelToList :: NonEmptyList a -> [a]
+nelToList (NEL x xs) = x:xs
+
+listToNel :: [a] -> Maybe (NonEmptyList a)
+listToNel []     = Nothing
+listToNel (x:xs) = Just (NEL x xs)
+
+headNEL :: NonEmptyList a -> a
+headNEL (NEL a _) = a
+
+tailNEL :: NonEmptyList a -> [a]
+tailNEL (NEL _ as) = as
