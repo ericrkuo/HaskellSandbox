@@ -204,6 +204,34 @@ slMap f (SkipAndRest n sl)
 slSigns :: SparseList -> SparseList
 slSigns = slMap signum
 
+-- slReplicate - replicates OneAndRest of the specified value
+slReplicate :: Int -> Double -> SparseList
+slReplicate 0 _ = Empty
+slReplicate n d
+  | n < 0 = Empty
+  | otherwise = (OneAndRest d (slReplicate (n-1) d))
+
+-- slAppend - joins two SparseLists
+slAppend :: SparseList -> SparseList -> SparseList
+slAppend Empty Empty = Empty
+slAppend x Empty = x
+slAppend Empty x = x
+slAppend (OneAndRest d sl) x = (OneAndRest d (slAppend sl x))
+slAppend (SkipAndRest n sl) x = (SkipAndRest n (slAppend sl x))
+
+-- slMap' using slReplicate and slAppend
+slMap' :: (Double -> Double) -> SparseList -> SparseList
+slMap' _ Empty = Empty
+slMap' f (OneAndRest d sl) = OneAndRest (f d) (slMap' f sl)
+slMap' f (SkipAndRest n sl)
+  | f 0 == 0 = SkipAndRest n (slMap f sl)
+  | otherwise = (slReplicate (max n 1) (f 0)) `slAppend` (slMap f sl)
+
+slMapTest1 = (slMap (+ 1) slManyElt2) == (slMap' (+ 1) slManyElt2)
+slMapTest2 = (slMap (^ 2) slManyElt2) == (slMap' (^ 2) slManyElt2)
+slMapTest3 = (slMap (* 2) slManyElt2) == (slMap' (* 2) slManyElt2)
+slMapTest4 = (slMap signum slManyElt2) == (slMap' signum slManyElt2)
+
 -- 12
 data ProVal a = CV a String
               | PV a
