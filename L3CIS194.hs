@@ -84,9 +84,9 @@ fooEx3 = A "hello"
 -- Polymorphic functions
 filterList :: (t -> Bool) -> List t -> List t
 filterList _ E = E
-filterList f (C x xs)
-  | f x = C x (filterList f xs)
-  | otherwise = filterList f xs
+filterList f (C t ts)
+  | f t = C t (filterList f ts)
+  | otherwise = filterList f ts
 
 exFilterList1 = filterList odd lst1
 exFilterList2 = filterList (> 'y') lst2

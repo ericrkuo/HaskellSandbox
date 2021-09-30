@@ -194,8 +194,13 @@ filterWithinUnit = slFilter (\n -> abs n < 1)
 slMap :: (Double -> Double) -> SparseList -> SparseList
 slMap _ Empty = Empty
 slMap f (OneAndRest d sl) = OneAndRest (f d) (slMap f sl)
-slMap f (SkipAndRest n sl) = SkipAndRest (round (f (fromIntegral n))) (slMap f sl)
+slMap f (SkipAndRest n sl)
+  | f 0 == 0 = SkipAndRest n (slMap f sl)
+  | n <= 1 = OneAndRest (f 0) (slMap f sl)
+  | otherwise = OneAndRest (f 0) (slMap f (SkipAndRest (n-1) sl))
 
+-- NOTE slSigns (SkipAndRest 3 Empty) should be (SkipAndRest 3 Empty)
+-- because SkipAndRest 3 Empty is [0,0,0] which is already the correct sign
 slSigns :: SparseList -> SparseList
 slSigns = slMap signum
 
