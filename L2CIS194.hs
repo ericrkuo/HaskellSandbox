@@ -271,6 +271,23 @@ bind pa@(CV val _) f = case pb of
     pb = f val
     cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
 
+-- bind using helper functions to getVal
+bind''' :: ProVal a -> (a -> ProVal b) -> ProVal b
+bind''' pa@(PV val) f = CV (getVal' pb) cmt
+  where
+    pb = f val
+    cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+    getVal' y = case y of
+      (CV x _) -> x
+      (PV x) -> x
+bind''' pa@(CV val _) f = CV (getVal' pb) cmt
+  where
+    pb = f val
+    cmt = ((displayPro pa) ++ " " ++ (displayPro pb) ++ " bound")
+    getVal' y = case y of
+      (CV x _) -> x
+      (PV x) -> x
+
 -- data constructor types that are function types in algebraic data types
 data Moo = Moo (Int -> String) Bool
          | X ([Int] -> ProVal Int) [Int]
