@@ -67,6 +67,20 @@ lst4 = C "hello" (C "hi" (C "foo" (C "boo" E)))
 lst5 :: List IntList
 lst5 = C exampleList (C Empty (C (Cons 123 Empty) E))
 
+-- data types with more than one type variables
+data Foo a b c = A a
+              | B b
+              | D (c -> b) a
+
+fooEx1 :: Foo Int String Bool
+fooEx1 = D (\n -> show n) 123
+
+fooEx2 :: Foo Bool Char Integer
+fooEx2 = B 'A'
+
+fooEx3 :: Foo String b c
+fooEx3 = A "hello"
+
 -- Polymorphic functions
 filterList :: (t -> Bool) -> List t -> List t
 filterList _ E = E
