@@ -72,6 +72,16 @@ data SparseList = Empty
                 | SkipAndRest Int SparseList
   deriving (Eq, Show)       
 
+toList :: SparseList -> [Double]
+toList Empty = []
+toList (OneAndRest d sl) = d : toList sl
+toList (SkipAndRest n sl) = (replicate (max n 1) 0) ++ (toList sl)
+
+fromList :: [Double] -> SparseList
+fromList [] = Empty
+fromList (0:xs) = (SkipAndRest 1 (fromList xs))
+fromList (x:xs) = (OneAndRest x (fromList xs))
+
 -- L2.5
 -- All it wants is to replace explicit 0's in OneAndRest with SkipAndRest 1
 slZeroToSkip :: SparseList -> SparseList
