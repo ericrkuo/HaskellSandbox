@@ -24,6 +24,8 @@ ex04 [] = []
 ex04 [a] = [a]
 ex04 (a:as) = as
 
+-- this is actually function composition\
+-- ex05 f g a = f (g a)
 -- inputs: function that inputs b and outputs c
 -- function that inputs a and outputs b
 -- a
